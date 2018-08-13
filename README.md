@@ -4,7 +4,7 @@
 ```
 $ make install
 ```
-or, (To generate docs as well)
+or, (to generate docs as well)
 ```
 $ make
 ```
@@ -13,12 +13,12 @@ $ make
 ```
 $ make uninstall
 ```
-To remove also Sphinx the documentation generator:
+To remove also Sphinx - the documentation generator:
 ```
 $ make clean_all
 ```
 
-** Generate documentation:
+### Generate documentation:
 ```
 $ make doc
 ```
