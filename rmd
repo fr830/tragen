@@ -1,0 +1,21 @@
+#!/bin/bash 
+
+rmd() {
+	export port=8080
+	while true
+	do
+		echo "trying with $port"
+		grip $1 $port  & 
+		if [ $? -eq 0 ]
+		then
+			echo "status code = 0. Breaking!"
+			break
+		else
+			export port=$(($port+1))
+			echo "Incremeted port <- $port"
+		fi
+	done
+	firefox http://localhost:$port/
+}
+
+rmd $1

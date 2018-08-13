@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>tuto_server_client.md - Grip</title>
+  <link rel="icon" href="http://localhost:8080/__/grip/static/favicon.ico">
+  <link rel="stylesheet" href="tuto_server_client_files/github-5536bde82c3dab5846d83f7a636844b0.css">
+  <link rel="stylesheet" href="tuto_server_client_files/site-14cf418638c848dd5bbac72b6f77dfa2.css">
+  <link rel="stylesheet" href="tuto_server_client_files/frameworks-0e1c43e90618c1e26b9b138a9d83c008.css">
+  <link rel="stylesheet" href="tuto_server_client_files/octicons.css">
+  <style>
+    /* Page tweaks */
+    .preview-page {
+      margin-top: 64px;
+    }
+    /* User-content tweaks */
+    .timeline-comment-wrapper > .timeline-comment:after,
+    .timeline-comment-wrapper > .timeline-comment:before {
+      content: none;
+    }
+    /* User-content overrides */
+    .discussion-timeline.wide {
+      width: 920px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div id="preview-page" class="preview-page" data-autorefresh-url="/__/grip/refresh/">
+
+    
+
+      <div role="main" class="main-content">
+        <div class="container new-discussion-timeline experiment-repo-nav">
+          <div class="repository-content">
+            <div id="readme" class="readme boxed-group clearfix announce instapaper_body md">
+              
+                <h3>
+                  <span class="octicon octicon-book"></span>
+                  tuto_server_client.md
+                </h3>
+              
+              <article class="markdown-body entry-content" itemprop="text" id="grip-content">
+                <p>Once the data model has been defined and an <em>UaDataStruct</em> has been created, we can create an opcua Tragen server, load the data into its address space and start one or more clients.</p>
+<h1>
+<a id="user-content-tragen-server" class="anchor" href="#tragen-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tragen Server:</h1>
+<h2>
+<a id="user-content-how-to-start-it" class="anchor" href="#how-to-start-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to start it?</h2>
+<p>We start by chosing an address (port, uri) and optionally a name for the server, then we instantiate the ServerTragen class.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> srv_url<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>opc.tcp://0.0.0.0:4840/tragen0/server0/<span class="pl-pds">"</span></span>    
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> srv_name<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>myServer<span class="pl-pds">"</span></span>    
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> server <span class="pl-k">=</span> ServerTragen(srv_url, <span class="pl-v">name</span><span class="pl-k">=</span>srv_name)     </pre></div>
+<p>Now we have an instance of ServerTragen, but it has not yet been started and data hasn't been loaded yet.<br>
+To do so, we just make a call to the init method and pass the previously defined <em>UaDataStruct</em> object.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> server.init(<span class="pl-v">data_nodes</span><span class="pl-k">=</span>ua_graph)    </pre></div>
+<p>The server should now be running and be able to receive client connections.</p>
+<h2>
+<a id="user-content-what-happens-inside-the-init-method" class="anchor" href="#what-happens-inside-the-init-method" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What happens inside the <em>init()</em> method?</h2>
+<p>We will look at the code the function.</p>
+<div class="highlight highlight-source-python"><pre>  <span class="pl-k">def</span> <span class="pl-en">init</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">data_nodes</span><span class="pl-k">=</span><span class="pl-c1">None</span>, <span class="pl-smi">by_xml</span><span class="pl-k">=</span><span class="pl-c1">False</span>):
+      <span class="pl-s"><span class="pl-pds">"""</span></span>
+<span class="pl-s">      Set an endpoint, define accepted security policies, populates the adress space,</span>
+<span class="pl-s">      create the notification events (to which clients can subscribe), then starts the</span>
+<span class="pl-s">      server.</span>
+<span class="pl-s"></span>
+<span class="pl-s">      :type data_nodes:  UaDataStruct()</span>
+<span class="pl-s">      <span class="pl-pds">"""</span></span>
+      <span class="pl-c1">self</span>.set_endpoint(<span class="pl-c1">self</span>.uri)
+      <span class="pl-c1">self</span>.set_server_name(<span class="pl-c1">self</span>.name)
+
+      <span class="pl-c1">self</span>.set_security_policy([
+              ua.SecurityPolicyType.NoSecurity,
+              ua.SecurityPolicyType.Basic128Rsa15_SignAndEncrypt,
+              ua.SecurityPolicyType.Basic128Rsa15_Sign,
+              ua.SecurityPolicyType.Basic256_SignAndEncrypt,
+              ua.SecurityPolicyType.Basic256_Sign])
+
+      <span class="pl-c"><span class="pl-c">#</span>self.load_certificate("server_cert.pem")</span>
+      <span class="pl-c"><span class="pl-c">#</span>self.load_private_key("server_private_key.pem")</span>
+
+      <span class="pl-c"><span class="pl-c">#</span> populating the address space</span>
+      <span class="pl-c1">self</span>.populate_ns(data_nodes, by_xml)
+      <span class="pl-c"><span class="pl-c">#</span> creating notification events (if there's any, for clients to subscribe to)</span>
+      <span class="pl-c1">self</span>.create_notifying_events(<span class="pl-c1">self</span>.get_root_node(), <span class="pl-c1">self</span>.get_objects_node(), data_nodes._graph)
+      
+      <span class="pl-k">if</span> <span class="pl-c1">self</span>.independant:
+          <span class="pl-c"><span class="pl-c">#</span> Create an updater thread for every updatable variable then start it</span>
+          <span class="pl-c1">self</span>.var_updaters <span class="pl-k">=</span> <span class="pl-c1">self</span>.set_updaters(data_nodes._graph)
+          <span class="pl-k">for</span> updater <span class="pl-k">in</span> <span class="pl-c1">self</span>.var_updaters:
+              updater.start()
+          <span class="pl-c"><span class="pl-c">#</span> Create  notifier thread for every monitored variable then start it</span>
+          <span class="pl-c1">self</span>.notifiers <span class="pl-k">=</span> <span class="pl-c1">self</span>.set_notifiers()
+          <span class="pl-k">for</span> notifier <span class="pl-k">in</span> <span class="pl-c1">self</span>.notifiers:
+              notifier.start()
+
+      <span class="pl-c1">self</span>.start()
+</pre></div>
+<p>As explained in the Docstring, this method sets and endpoint with the specified URL.<br>
+Then, it specifies the accepted security policies that a client can 
+choose to communicate with the server on the Secure Channel. By default,
+ the cient will select <em>NoSecurity</em>, so to enforce authentication or encryption, the <em>ua.SecurityPolicyType.NoSecurity</em> must be removed from the set.<br>
+Afterwards, it will populate the address space with data and change writing permissions for writable nodes.<br>
+The next part is about creating notification events for variables that 
+are supposed to be updated regularly. As specified in the <em>UaDataStruct</em>,
+ this variables have a "safe" range of values, if their value gets 
+outside this range, a notification is sent to the subscribed clients.<br>
+If the ServerTragen is launched outside a Tragen context, it will create
+ an updater thread for every updatable variable, and create notifier 
+threads that will actually trigger the notification events created 
+before.<br>
+Finally, when everything is set, the server is started.</p>
+<h1>
+<a id="user-content-tragen-client" class="anchor" href="#tragen-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tragen Client:</h1>
+<h2>
+<a id="user-content-how-to-start-it-1" class="anchor" href="#how-to-start-it-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to start it?</h2>
+<p>We follow the exact same steps as for the server.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> srv_url<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>opc.tcp://10.210.16.12:4840/tragen0/server0/<span class="pl-pds">"</span></span>  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> client <span class="pl-k">=</span> ClientTragen(srv_url)  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> client.init(<span class="pl-v">ua_data_struct</span><span class="pl-k">=</span>ua_graph)  </pre></div>
+<p>The graph must be shared between the server and the client.<br>
+The client has to either build the same graph locally, or find a way to get a copy from the server.</p>
+<h2>
+<a id="user-content-what-happens-inside-the-init-method-1" class="anchor" href="#what-happens-inside-the-init-method-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What happens inside the <em>init()</em> method?</h2>
+<p>We will look at the code the function.</p>
+<div class="highlight highlight-source-python"><pre>  <span class="pl-k">def</span> <span class="pl-en">init</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">ua_data_struct</span><span class="pl-k">=</span><span class="pl-c1">None</span>):
+      <span class="pl-s"><span class="pl-pds">"""</span></span>
+<span class="pl-s">      Connect to the server, and initialize subscriptions if the server's data nodes are provided.</span>
+<span class="pl-s"></span>
+<span class="pl-s">      :type ua_data_struct:   UaDataStruct()</span>
+<span class="pl-s">      <span class="pl-pds">"""</span></span>
+      <span class="pl-c"><span class="pl-c">#</span> Security policy (Uncomment to enable)</span>
+      <span class="pl-c"><span class="pl-c">#</span>self.set_security(security_policies.SecurityPolicyBasic128Rsa15, "client_cert.pem", "client_private_key.pem", server_certificate_path="server_cert.pem")</span>
+      <span class="pl-c1">self</span>.connect()
+      <span class="pl-c1">self</span>.connected <span class="pl-k">=</span> <span class="pl-c1">True</span>
+      <span class="pl-c1">self</span>.load_type_definitions()
+      <span class="pl-k">if</span> ua_data_struct <span class="pl-k">is</span> <span class="pl-k">not</span> <span class="pl-c1">None</span>:
+          <span class="pl-c1">self</span>.initialize_subs(ua_data_struct._graph)
+      <span class="pl-k">if</span> <span class="pl-c1">self</span>.independant:
+          writables, readables <span class="pl-k">=</span> <span class="pl-c1">self</span>.setup_rw(ua_data_struct._graph)
+          <span class="pl-c1">self</span>.set_client_agents(readables, writables, ua_data_struct._graph)
+          <span class="pl-c1">self</span>.writer.start()
+          <span class="pl-c1">self</span>.reader.start()</pre></div>
+<p>After establishing a connection with the server, it explores the graph and subscribes to every node that is updatable.<br>
+It also constructs a list of all the writable and readable variables and
+ use it to create a writer thread (that will randomly modify writable 
+variables) and a reader thread (that will send random read requests to 
+the server).</p>
+
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+
+  </div>
+  <div>&nbsp;</div>
+  </div><script>
+    function showCanonicalImages() {
+      var images = document.getElementsByTagName('img');
+      if (!images) {
+        return;
+      }
+      for (var index = 0; index < images.length; index++) {
+        var image = images[index];
+        if (image.getAttribute('data-canonical-src') && image.src !== image.getAttribute('data-canonical-src')) {
+          image.src = image.getAttribute('data-canonical-src');
+        }
+      }
+    }
+
+    function scrollToHash() {
+      if (location.hash && !document.querySelector(':target')) {
+        var element = document.getElementById('user-content-' + location.hash.slice(1));
+        if (element) {
+           element.scrollIntoView();
+        }
+      }
+    }
+
+    function autorefreshContent(eventSourceUrl) {
+      var initialTitle = document.title;
+      var contentElement = document.getElementById('grip-content');
+      var source = new EventSource(eventSourceUrl);
+      var isRendering = false;
+
+      source.onmessage = function(ev) {
+        var msg = JSON.parse(ev.data);
+        if (msg.updating) {
+          isRendering = true;
+          document.title = '(Rendering) ' + document.title;
+        } else {
+          isRendering = false;
+          document.title = initialTitle;
+          contentElement.innerHTML = msg.content;
+          showCanonicalImages();
+        }
+      }
+
+      source.onerror = function(e) {
+        if (e.readyState === EventSource.CLOSED && isRendering) {
+          isRendering = false;
+          document.title = initialTitle;
+        }
+      }
+    }
+
+    window.onhashchange = function() {
+      scrollToHash();
+    }
+
+    window.onload = function() {
+      scrollToHash();
+    }
+
+    showCanonicalImages();
+
+    var autorefreshUrl = document.getElementById('preview-page').getAttribute('data-autorefresh-url');
+    if (autorefreshUrl) {
+      autorefreshContent(autorefreshUrl);
+    }
+  </script>
+
+</body></html>

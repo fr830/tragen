@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>tuto_datamodel.md - Grip</title>
+  <link rel="icon" href="http://localhost:8080/__/grip/static/favicon.ico">
+  <link rel="stylesheet" href="tuto_datamodel_files/github-5536bde82c3dab5846d83f7a636844b0.css">
+  <link rel="stylesheet" href="tuto_datamodel_files/site-14cf418638c848dd5bbac72b6f77dfa2.css">
+  <link rel="stylesheet" href="tuto_datamodel_files/frameworks-0e1c43e90618c1e26b9b138a9d83c008.css">
+  <link rel="stylesheet" href="tuto_datamodel_files/octicons.css">
+  <style>
+    /* Page tweaks */
+    .preview-page {
+      margin-top: 64px;
+    }
+    /* User-content tweaks */
+    .timeline-comment-wrapper > .timeline-comment:after,
+    .timeline-comment-wrapper > .timeline-comment:before {
+      content: none;
+    }
+    /* User-content overrides */
+    .discussion-timeline.wide {
+      width: 920px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div id="preview-page" class="preview-page" data-autorefresh-url="/__/grip/refresh/">
+
+    
+
+      <div role="main" class="main-content">
+        <div class="container new-discussion-timeline experiment-repo-nav">
+          <div class="repository-content">
+            <div id="readme" class="readme boxed-group clearfix announce instapaper_body md">
+              
+                <h3>
+                  <span class="octicon octicon-book"></span>
+                  tuto_datamodel.md
+                </h3>
+              
+              <article class="markdown-body entry-content" itemprop="text" id="grip-content"><p>The <em>UaDataStruct</em>
+ is one of the main components of Tragen. An instance of this class 
+defines the data model that will be stored in the server (nodes, 
+variables, objects, ..) and also defines the logic of how these nodes 
+will be used by the clients and the server alike.<br>
+All the elements of the generated graph (folders, variables, ..) are 
+represented by nodes. They are instances of different objects, all 
+inheriting the <em>TragenNodeStruct</em> class structure.<br>
+Their attributes describe their behavior (i.e how the server/clients will modify them) and the read permissions.</p>
+<h1>
+<a id="user-content-uadatastruct-graph" class="anchor" href="#uadatastruct-graph" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>UaDataStruct</em> graph:</h1>
+<p>This graph of TragenNodes and their dependencies is built using 
+python dictionaries. It was designed this way to make for an easy 
+recursive functions that explore it.</p>
+<p>The root (i.e the main dictionary, <em>UaDataStruct._graph</em>) contains four elements, their keys are 'folders', 'objects', 'variables' and 'properties'.<br>
+root['variables'] and root['properties'] are lists of TragenVariable and TragenProperty instances respectively.<br>
+root['objects'] is a dictionary of ua_objects where the keys are 
+TragenObjects and their values are dictionaries. These latter contain 
+two elements that are referenced with the following keys: 'variables', 
+'properties'. (These are two lists of TragenVariable/TragenProperty 
+instances).<br>
+Example:</p>
+<div class="highlight highlight-source-python"><pre>root[<span class="pl-s"><span class="pl-pds">'</span>objects<span class="pl-pds">'</span></span>]	<span class="pl-k">=</span> {	TragenObject: {<span class="pl-s"><span class="pl-pds">'</span>variables<span class="pl-pds">'</span></span>: [TragenVariable, <span class="pl-c1">...</span>], <span class="pl-s"><span class="pl-pds">'</span>properties<span class="pl-pds">'</span></span>: [TragenProperty, <span class="pl-c1">...</span>]}    
+			<span class="pl-c1">...</span>    
+		  }    </pre></div>
+<p>root['folders'] is a dictionary where the keys are TragenFolders and 
+their values are dictionaries which format is similar to that of root.<br>
+Example:</p>
+<div class="highlight highlight-source-python"><pre>root[<span class="pl-s"><span class="pl-pds">'</span>folders<span class="pl-pds">'</span></span>] <span class="pl-k">=</span> {	TragenFolder:	{	variables<span class="pl-s"><span class="pl-pds">'</span>: 	[TragenVariable, ...],   <span class="pl-ii"></span></span>
+				    		properties<span class="pl-s"><span class="pl-pds">'</span>: 	[TragenProperty, ...],  <span class="pl-ii"></span></span>
+				    		objects<span class="pl-s"><span class="pl-pds">'</span>:	{	TragenObject: {<span class="pl-pds">'</span></span>variables<span class="pl-s"><span class="pl-pds">'</span>: [TragenVariable, ...], <span class="pl-pds">'</span></span>properties<span class="pl-s"><span class="pl-pds">'</span>: [TragenProperty, ...]}   <span class="pl-ii"></span></span>
+                                            				<span class="pl-c1">...</span>  
+                                          			},  
+				    		folders<span class="pl-s"><span class="pl-pds">'</span>: 	{ TragenFolder: {<span class="pl-pds">'</span></span>folders<span class="pl-s"><span class="pl-pds">'</span>: ..., <span class="pl-pds">'</span></span>objects<span class="pl-s"><span class="pl-pds">'</span>: ..., <span class="pl-pds">'</span></span>variables<span class="pl-s"><span class="pl-pds">'</span>: ..., <span class="pl-pds">'</span></span>properties<span class="pl-s"><span class="pl-pds">'</span>: ...<span class="pl-c1">}}</span>  <span class="pl-ii"></span></span>
+                                  	},  
+                    	<span class="pl-c1">...</span>.  
+		  }  </pre></div>
+<h1>
+<a id="user-content-getting-started-defining-opc-ua-servers-data-graph" class="anchor" href="#getting-started-defining-opc-ua-servers-data-graph" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started: Defining OPC UA server's data graph.</h1>
+<h2>
+<a id="user-content-creating-a-graph-of-folders-objects-variables-and-properties" class="anchor" href="#creating-a-graph-of-folders-objects-variables-and-properties" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a graph of folders, objects, variables and properties.</h2>
+<p>We can instantiate an empty <em>UaDataStruct</em> graph or initialize it with some elements (code snippet below).<br>
+All the parameters are optional, we can add nodes after instantation.<br>
+For the class <em>__init__()</em> and all of the other methods of adding
+ nodes to the graph, the folder and object parameters (folder, 
+ua_object) are strings representing their name.<br>
+The variables and properties parameters take a list of tuples representing the name and the value of each variable/property.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-k">from</span> opcua <span class="pl-k">import</span> ua  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-k">from</span> tragen <span class="pl-k">import</span> <span class="pl-k">*</span>  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph <span class="pl-k">=</span> UaDataStruct(<span class="pl-v">folder</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>example_folder_1<span class="pl-pds">"</span></span>, <span class="pl-v">ua_object</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>object_1<span class="pl-pds">"</span></span>, <span class="pl-v">ua_variables</span><span class="pl-k">=</span>[(<span class="pl-s"><span class="pl-pds">"</span>var_11<span class="pl-pds">"</span></span>,<span class="pl-c1">0<span class="pl-ii">2</span></span>),(<span class="pl-s"><span class="pl-pds">"</span>var_12<span class="pl-pds">"</span></span>,<span class="pl-c1">12.5</span>)], <span class="pl-v">ua_properties</span><span class="pl-k">=</span>[(<span class="pl-s"><span class="pl-pds">"</span>property_example<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>running<span class="pl-pds">"</span></span>)])  </pre></div>
+<p>We can use the method <em>show()</em> to print the graph.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.show()  
+[]] example_folder_1 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>__[<span class="pl-k">+</span>] object_1 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_11, <span class="pl-c1">2</span>) (ns=<span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_12, <span class="pl-c1">12.5</span>) (ns=<span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Property: (property_example, running) (ns=<span class="pl-c1">1</span>)  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span>  </pre></div>
+<p>Defining an additional folder named 'example_folder_2'.<br>
+Let's add two objects to it using two different approaches.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> folder2 <span class="pl-k">=</span> ua_graph.add_folder(<span class="pl-s"><span class="pl-pds">"</span>example_folder_2<span class="pl-pds">"</span></span>)   </pre></div>
+<p>We've kept our new folder's in a variable 'folder2' for later use but it's not necessary.<br>
+As shown below, to add a new object, we can either use the folder's name as a reference, or its node in the graph.<br>
+(Objects that are not added to any folder will be placed in the objects folder, right under the root node).</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-c"><span class="pl-c">#</span> Adding and object to 'example_folder_2' using its corresponding folder node  </span>
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_object(<span class="pl-s"><span class="pl-pds">"</span>object_2<span class="pl-pds">"</span></span>, <span class="pl-v">folder_node</span><span class="pl-k">=</span>folder2, <span class="pl-v">ua_properties</span><span class="pl-k">=</span>[(<span class="pl-s"><span class="pl-pds">"</span>this_is_a_property<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>stopped<span class="pl-pds">"</span></span>)], <span class="pl-v">ua_variables</span><span class="pl-k">=</span>[(<span class="pl-s"><span class="pl-pds">"</span>var_21<span class="pl-pds">"</span></span>,<span class="pl-c1">0</span>),(<span class="pl-s"><span class="pl-pds">"</span>var_22<span class="pl-pds">"</span></span>, <span class="pl-c1">1</span>), (<span class="pl-s"><span class="pl-pds">"</span>var_23<span class="pl-pds">"</span></span>, <span class="pl-c1">2</span>)])  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span>   
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-c"><span class="pl-c">#</span> Adding a second object to 'example_folder_2' referring to it by its name  </span>
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_object(<span class="pl-s"><span class="pl-pds">"</span>object_3<span class="pl-pds">"</span></span>, <span class="pl-v">folder_name</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>example_folder_2<span class="pl-pds">"</span></span>, <span class="pl-v">ua_properties</span><span class="pl-k">=</span>[(<span class="pl-s"><span class="pl-pds">"</span>first_property_of_object3<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>random<span class="pl-pds">"</span></span>)])  </pre></div>
+<p>Your graph should look like this:</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.show()  
+[]] example_folder_2 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>__[<span class="pl-k">+</span>] object_2 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_21, <span class="pl-c1">0</span>) (ns=<span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_22, <span class="pl-c1">1</span>) (ns=<span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_23, <span class="pl-c1">2</span>) (ns=<span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Property: (this_is_a_property, stopped) (ns=<span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>__[<span class="pl-k">+</span>] object_3 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">0</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Property: (first_property_of_object3, random) (ns=<span class="pl-c1">0</span>)  
+[]] example_folder_1 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>__[<span class="pl-k">+</span>] object_1 (<span class="pl-v">ns</span><span class="pl-k">=</span><span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_11, <span class="pl-c1">2</span>) (ns=<span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Variable: (var_12, <span class="pl-c1">12.5</span>) (ns=<span class="pl-c1">1</span>)  
+ <span class="pl-k">|</span>   <span class="pl-k">|</span>__[<span class="pl-k">*</span>] Property: (property_example, running) (ns=<span class="pl-c1">1</span>)  </pre></div>
+<p>Same thing for adding subfolders, we can either refer to their parent folder by its name or its node.<br>
+Unless respecting a folder naming convention whereby all names are distinct, nodes are generally preferred over names.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-c"><span class="pl-c">#</span> Adding a subflder to 'example_folder_1'  </span>
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_folder(<span class="pl-s"><span class="pl-pds">"</span>subfolder_3<span class="pl-pds">"</span></span>, <span class="pl-v">parent_name</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>example_folder_1<span class="pl-pds">"</span></span>)  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_folder(<span class="pl-s"><span class="pl-pds">"</span>empty_4_added_using_its_parent_node<span class="pl-pds">"</span></span>, <span class="pl-v">parent_node</span><span class="pl-k">=</span>folder2)  </pre></div>
+<p>So far, we have added objects and their attributes at the same time.<br>
+Let's add an empty object and <strong>then</strong> add elements to it.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-c"><span class="pl-c">#</span> Adding an object then adding a property to it as an attribute  </span>
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_object(<span class="pl-s"><span class="pl-pds">"</span>object_4<span class="pl-pds">"</span></span>)  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_property(<span class="pl-s"><span class="pl-pds">"</span>BestProperty<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>ValueofBestProperty<span class="pl-pds">"</span></span>, <span class="pl-v">par_name</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>object_4<span class="pl-pds">"</span></span>)  </pre></div>
+<p>Same thing for variables, we use 'add_variable' with the name and the
+ value of the variable passed as parameters, then one of the<br>
+following parameter 'par_name' or 'par_node' (parent name or parent node).</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> <span class="pl-c"><span class="pl-c">#</span> The following must be self-explanatory.  </span>
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_folder(<span class="pl-s"><span class="pl-pds">"</span>subfolder_4<span class="pl-pds">"</span></span>, <span class="pl-v">parent_name</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>example_folder_1<span class="pl-pds">"</span></span>)  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.add_object(<span class="pl-s"><span class="pl-pds">"</span>myobject_5<span class="pl-pds">"</span></span>, <span class="pl-v">folder_name</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>subfolder_4<span class="pl-pds">"</span></span>, <span class="pl-v">ua_properties</span><span class="pl-k">=</span>[(<span class="pl-s"><span class="pl-pds">"</span>AnotherProperty<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>random_value<span class="pl-pds">"</span></span>)])  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.show()  </pre></div>
+<h2>
+<a id="user-content-logic-permissions-and-other-methods" class="anchor" href="#logic-permissions-and-other-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Logic, permissions, and other methods...</h2>
+<p>Setting up some configuration before initialization of Tragen clients and server.<br>
+Defining some properties of the elements in the graph.<br>
+Folders, objects, variables and properties within the graph have some attributes that could be customized.<br>
+NB: the graph is just a description of the server's data. Changes on the server will not take effect until <em>init()</em> is called.</p>
+<h3>
+<a id="user-content-find-methods" class="anchor" href="#find-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Find</em> methods:</h3>
+<ul>
+<li>if find_[variable/property] is called with only a name it will return a list of variable/property nodes with this name.</li>
+<li>if find_[folder/object] is called with only a name it will return a 
+list of tuples [(folder/object, content)] where folders/objects is the 
+corresponding TragenNode and content is graph (dictionnary)</li>
+</ul>
+<h3>
+<a id="user-content-write-permission" class="anchor" href="#write-permission" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Write permission:</h3>
+<p>The 'is_writable' attribute decides wether the variable/property's value can be written/modified by clients or not.<br>
+This descriptor is used by the server to give writing rights to clients for the corresponding node.<br>
+It is also used by the <em>init()</em> method of the client to know which nodes should be modified by the Writer thread.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.find_variable(<span class="pl-s"><span class="pl-pds">"</span>var_21<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>].is_writable <span class="pl-k">=</span> <span class="pl-c1">True</span>  </pre></div>
+<p>To make things clear, let's break apart the next example into steps to understand what happens.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.find_object(<span class="pl-s"><span class="pl-pds">"</span>object_3<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>][<span class="pl-c1">1</span>][<span class="pl-s"><span class="pl-pds">"</span>properties<span class="pl-pds">"</span></span>][<span class="pl-c1">0</span>].is_writable <span class="pl-k">=</span> <span class="pl-c1">True</span>  </pre></div>
+<p>First, we select the first element returned by 'find_object' (In this example the list contains only one entry).<br>
+Then, we select content (1, second element of the returned tuple), which is a dictionnary of variables and properties.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> object_3, object_3_content <span class="pl-k">=</span> ua_graph.find_object(<span class="pl-s"><span class="pl-pds">"</span>object_3<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>]
+<span class="pl-k">or</span> 
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> _, object_3_content <span class="pl-k">=</span> ua_graph.find_object(<span class="pl-s"><span class="pl-pds">"</span>object_3<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>]
+<span class="pl-k">or</span> 
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> object_3 <span class="pl-k">=</span> ua_graph.find_object(<span class="pl-s"><span class="pl-pds">"</span>object_3<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>][<span class="pl-c1">1</span>]</pre></div>
+<p>We then take the first property (there's only oen in this example 'first_property_of_object3').</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> first_property <span class="pl-k">=</span> object_3_content.[<span class="pl-s"><span class="pl-pds">"</span>properties<span class="pl-pds">"</span></span>][<span class="pl-c1">0</span>]</pre></div>
+<p>Finally, we set it to be writable by clients.</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> first_property.is_writable <span class="pl-k">=</span> <span class="pl-c1">True</span>  </pre></div>
+<h3>
+<a id="user-content-non-static-variables" class="anchor" href="#non-static-variables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Non-static variables:</h3>
+<p>By default variables are static, if not (i.e is_reg_ud or is_irreg_id
+ is true) then the server will make sure to keep updating its value<br>
+'is_irreg_ud' : variable's value is updated every now and then. (By 
+default, the clients subscribed to it, will get notified about this 
+change)<br>
+'is_reg_ud' : variable's value is updated with fixed intervals. (By 
+default, the clients subscribed to it, will get notified whenever its 
+value goes below or above a threshold)</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.find_variable(<span class="pl-s"><span class="pl-pds">"</span>var_21<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>].is_irreg_ud <span class="pl-k">=</span> <span class="pl-c1">True</span>  
+<span class="pl-k">&gt;&gt;</span><span class="pl-k">&gt;</span> ua_graph.find_variable(<span class="pl-s"><span class="pl-pds">"</span>var_12<span class="pl-pds">"</span></span>)[<span class="pl-c1">0</span>].is_reg_ud <span class="pl-k">=</span> <span class="pl-c1">True</span>  </pre></div>
+</article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+
+  </div>
+  <div>&nbsp;</div>
+  </div><script>
+    function showCanonicalImages() {
+      var images = document.getElementsByTagName('img');
+      if (!images) {
+        return;
+      }
+      for (var index = 0; index < images.length; index++) {
+        var image = images[index];
+        if (image.getAttribute('data-canonical-src') && image.src !== image.getAttribute('data-canonical-src')) {
+          image.src = image.getAttribute('data-canonical-src');
+        }
+      }
+    }
+
+    function scrollToHash() {
+      if (location.hash && !document.querySelector(':target')) {
+        var element = document.getElementById('user-content-' + location.hash.slice(1));
+        if (element) {
+           element.scrollIntoView();
+        }
+      }
+    }
+
+    function autorefreshContent(eventSourceUrl) {
+      var initialTitle = document.title;
+      var contentElement = document.getElementById('grip-content');
+      var source = new EventSource(eventSourceUrl);
+      var isRendering = false;
+
+      source.onmessage = function(ev) {
+        var msg = JSON.parse(ev.data);
+        if (msg.updating) {
+          isRendering = true;
+          document.title = '(Rendering) ' + document.title;
+        } else {
+          isRendering = false;
+          document.title = initialTitle;
+          contentElement.innerHTML = msg.content;
+          showCanonicalImages();
+        }
+      }
+
+      source.onerror = function(e) {
+        if (e.readyState === EventSource.CLOSED && isRendering) {
+          isRendering = false;
+          document.title = initialTitle;
+        }
+      }
+    }
+
+    window.onhashchange = function() {
+      scrollToHash();
+    }
+
+    window.onload = function() {
+      scrollToHash();
+    }
+
+    showCanonicalImages();
+
+    var autorefreshUrl = document.getElementById('preview-page').getAttribute('data-autorefresh-url');
+    if (autorefreshUrl) {
+      autorefreshContent(autorefreshUrl);
+    }
+  </script>
+
+</body></html>
