@@ -1,4 +1,0 @@
-tragen
-tragen/client_tragen
-tragen/server_tragen
-tragen/ua_data_structure
