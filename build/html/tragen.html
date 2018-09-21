@@ -24,15 +24,16 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="tragen.client_tragen package" href="tragen.client_tragen.html" />
-    <link rel="prev" title="OPC-UA Tragen Documentation!" href="index.html" /> 
+    <link rel="prev" title="OPC-UA Tragen Documentation!" href="../../index.html" /> 
+    <link rel="prev" title="OPC-UA Tragen Documentation!" href="../../index.html" /> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -48,7 +49,8 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Tragen
+            <a href="../../index.html" class="icon icon-home"> Tragen
+            <a href="../../index.html" class="icon icon-home"> Tragen
           
 
           
@@ -108,7 +110,8 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Tragen</a>
+          <a href="../../index.html">Tragen</a>
+          <a href="../../index.html">Tragen</a>
         
       </nav>
 
@@ -137,7 +140,8 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
         
       <li>tragen package</li>
     
@@ -145,7 +149,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/tragen.rst.txt" rel="nofollow"> View page source</a>
+            <a href="sources/tragen.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -193,7 +197,7 @@
 <span id="tragen-tragen-module"></span><h2>tragen.tragen module<a class="headerlink" href="#module-tragen.tragen" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="tragen.tragen.Tragen">
-<em class="property">class </em><code class="descclassname">tragen.tragen.</code><code class="descname">Tragen</code><span class="sig-paren">(</span><em>srv_addr='opc.tcp://0.0.0.0:4840/tragen0/server0/'</em>, <em>srv_name=None</em>, <em>nb_client=1</em>, <em>namespace=1</em>, <em>output_directory=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">tragen.tragen.</code><code class="descname">Tragen</code><span class="sig-paren">(</span><em>srv_addr='opc.tcp://0.0.0.0:4840/tragen0/server0/'</em>, <em>srv_name=None</em>, <em>nb_client=1</em>, <em>namespace=1</em>, <em>output_directory=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>This is the main class of the OPC UA traffic generator.</p>
 <p>An instance of this class is a Tragen context. It orchestrates a custom
@@ -222,20 +226,20 @@ said clients.</p>
 </table>
 <dl class="method">
 <dt id="tragen.tragen.Tragen.add_client">
-<code class="descname">add_client</code><span class="sig-paren">(</span><em>srv_addr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen.add_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.add_client" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_client</code><span class="sig-paren">(</span><em>srv_addr</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen.add_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.add_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add another client to the client’s list, connect 
 it tothe server’s endpoint and initialize it.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="tragen.tragen.Tragen.close">
-<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.close" title="Permalink to this definition">¶</a></dt>
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shut down the Tragen context: disconnect clients and stop the server.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="tragen.tragen.Tragen.init">
-<code class="descname">init</code><span class="sig-paren">(</span><em>ua_srv_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.init" title="Permalink to this definition">¶</a></dt>
+<code class="descname">init</code><span class="sig-paren">(</span><em>ua_srv_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the Tragen context. The server and th clients are initialized.
 The server threads modifying data and notifying the clients are set up.
 The client threads reading, writing and polling the srever are set up here.
@@ -252,7 +256,7 @@ Should be called after the data structure has been well defined.</p>
 
 <dl class="method">
 <dt id="tragen.tragen.Tragen.set_client_agents">
-<code class="descname">set_client_agents</code><span class="sig-paren">(</span><em>items_list</em>, <em>var_list</em>, <em>root</em>, <em>objects</em>, <em>ua_data_struct</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen.set_client_agents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.set_client_agents" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_client_agents</code><span class="sig-paren">(</span><em>items_list</em>, <em>var_list</em>, <em>root</em>, <em>objects</em>, <em>ua_data_struct</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen.set_client_agents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.set_client_agents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and set up random reader and a writer thread (for a client)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -272,13 +276,13 @@ Should be called after the data structure has been well defined.</p>
 
 <dl class="method">
 <dt id="tragen.tragen.Tragen.set_notifiers">
-<code class="descname">set_notifiers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen.set_notifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.set_notifiers" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_notifiers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen.set_notifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.set_notifiers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and set up the server’s notifiers threads for monitored items.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="tragen.tragen.Tragen.set_updaters">
-<code class="descname">set_updaters</code><span class="sig-paren">(</span><em>root</em>, <em>objects</em>, <em>ua_data_struct</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tragen/tragen.html#Tragen.set_updaters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.set_updaters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_updaters</code><span class="sig-paren">(</span><em>root</em>, <em>objects</em>, <em>ua_data_struct</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tragen/tragen.html#Tragen.set_updaters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tragen.tragen.Tragen.set_updaters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursive method to set up an updater thread for every variable having the updatable
 attribute set. It is supposed to be called by init() but can be called seperately.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -315,7 +319,8 @@ attribute set. It is supposed to be called by init() but can be called seperatel
         <a href="tragen.client_tragen.html" class="btn btn-neutral float-right" title="tragen.client_tragen package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="OPC-UA Tragen Documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../../index.html" class="btn btn-neutral" title="OPC-UA Tragen Documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../../index.html" class="btn btn-neutral" title="OPC-UA Tragen Documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -354,13 +359,13 @@ attribute set. It is supposed to be called by init() but can be called seperatel
             SOURCELINK_SUFFIX: '.txt'
         };
     </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  <script type="text/javascript" src="static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
