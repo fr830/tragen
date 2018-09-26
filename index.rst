@@ -13,7 +13,7 @@ New OPC-UA client and server classes inheriting from the FreeOpcUa implementatio
 The main class 'Tragen' allows for the creation of a context of one opc-ua server and multiple clients connected to it, and orchestrates communication between them simulating real physical processes and communication btween Operation Technology devices.
 
 
-Content:
+Content
 ========
 
 .. toctree::
