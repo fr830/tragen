@@ -15,7 +15,10 @@ The main class 'Tragen' allows for the creation of a context of one opc-ua serve
 
 Content
 ========
+<<<<<<< HEAD
 
+=======
+>>>>>>> f76a15425b13d3f78b99813b570ec75c30113fae
 
 .. toctree::
    :maxdepth: 2
